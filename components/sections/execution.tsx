@@ -1,0 +1,164 @@
+"use client";
+
+import { useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Clock3, PauseCircle, PlayCircle, ShieldCheck } from "lucide-react";
+import { SectionHeader } from "@/components/ui/section-header";
+import type { ExecutionItem } from "@/types";
+
+interface ExecutionProps {
+  executionItems: ExecutionItem[];
+  lastDecisionTitle: string | null;
+  clearLastDecision: () => void;
+  onApproveDecision: (itemId: string) => void;
+  onDeferDecision: (itemId: string) => void;
+}
+
+const statusStyles: Record<ExecutionItem["status"], string> = {
+  in_progress: "border-sky-400/20 bg-sky-400/[0.08] text-sky-300",
+  ready: "border-emerald-400/20 bg-emerald-400/[0.08] text-emerald-300",
+  blocked: "border-amber-400/20 bg-amber-400/[0.08] text-amber-300",
+  complete: "border-white/10 bg-white/[0.05] text-text-secondary",
+};
+
+export function Execution({
+  executionItems,
+  lastDecisionTitle,
+  clearLastDecision,
+  onApproveDecision,
+  onDeferDecision,
+}: ExecutionProps) {
+  const pendingDecisions = executionItems.filter(
+    (item) => item.decisionRequired && item.decisionStatus === "pending"
+  );
+
+  useEffect(() => {
+    if (!lastDecisionTitle) {
+      return;
+    }
+
+    const timeout = setTimeout(clearLastDecision, 2500);
+    return () => clearTimeout(timeout);
+  }, [clearLastDecision, lastDecisionTitle]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.45 }}
+      className="space-y-8 sm:space-y-10"
+    >
+      <SectionHeader
+        title="Execution"
+        subtitle="The mutual action plan, the named owners, and the decisions that keep the deal moving."
+      />
+
+      <AnimatePresence>
+        {lastDecisionTitle && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="flex items-center gap-3 rounded-[24px] border border-claude-coral/20 bg-claude-coral/[0.05] px-5 py-4"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-claude-coral/15">
+              <Check className="h-4 w-4 text-claude-coral" strokeWidth={2.2} />
+            </div>
+            <div>
+              <p className="text-[13px] font-medium text-text-primary">Decision recorded</p>
+              <p className="text-[12px] text-text-secondary">{lastDecisionTitle}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {pendingDecisions.length > 0 && (
+        <section className="rounded-[28px] border border-claude-coral/15 bg-claude-coral/[0.04] p-5 sm:p-6">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-claude-coral/80" strokeWidth={1.8} />
+            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-claude-coral/70">
+              Decision queue
+            </p>
+          </div>
+          <div className="mt-5 grid gap-4 xl:grid-cols-2">
+            {pendingDecisions.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-[24px] border border-white/8 bg-black/10 px-4 py-4"
+              >
+                <p className="text-[14px] font-medium text-text-primary">{item.title}</p>
+                <p className="mt-2 text-[12px] text-text-muted">
+                  {item.owner} · {item.dueLabel}
+                </p>
+                <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">
+                  {item.detail}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => onApproveDecision(item.id)}
+                    className="rounded-full border border-claude-coral/20 bg-claude-coral/[0.10] px-3 py-1.5 text-[12px] font-medium text-claude-coral"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => onDeferDecision(item.id)}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[12px] text-text-secondary"
+                  >
+                    Defer
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="space-y-4">
+        {executionItems.map((item, index) => (
+          <motion.article
+            key={item.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.04, duration: 0.35 }}
+            className="rounded-[28px] border border-white/8 bg-white/[0.03] p-5"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[16px] font-medium text-text-primary">{item.title}</p>
+                <p className="mt-1 text-[12px] text-text-muted">
+                  {item.phase} · {item.owner} · {item.dueLabel}
+                </p>
+              </div>
+              <span
+                className={`rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.08em] ${statusStyles[item.status]}`}
+              >
+                {item.status.replace("_", " ")}
+              </span>
+            </div>
+            <p className="mt-4 text-[13px] leading-relaxed text-text-secondary">
+              {item.detail}
+            </p>
+            {item.decisionStatus === "approved" && (
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[12px] text-text-secondary">
+                <PlayCircle className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Approved and in motion
+              </div>
+            )}
+            {item.decisionStatus === "deferred" && (
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[12px] text-text-secondary">
+                <PauseCircle className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Deferred for later review
+              </div>
+            )}
+            {!item.decisionRequired && item.status === "in_progress" && (
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[12px] text-text-secondary">
+                <Clock3 className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Active owner, active thread
+              </div>
+            )}
+          </motion.article>
+        ))}
+      </section>
+    </motion.div>
+  );
+}

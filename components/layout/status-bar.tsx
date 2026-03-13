@@ -25,8 +25,9 @@ interface StatusBarProps {
   onAccountChange: (id: string) => void;
   pipelineTarget: number;
   estimatedArr: number;
-  dealStage: string;
-  activeAgents: number;
+  currentPhase: string;
+  signalCount: number;
+  pendingDecisions: number;
   oversightStatus: "active" | "idle";
   onOpenChat?: () => void;
   onOpenMobileNav: () => void;
@@ -40,8 +41,9 @@ export function StatusBar({
   onAccountChange,
   pipelineTarget,
   estimatedArr,
-  dealStage,
-  activeAgents,
+  currentPhase,
+  signalCount,
+  pendingDecisions,
   oversightStatus,
   onOpenChat,
   onOpenMobileNav,
@@ -168,12 +170,14 @@ export function StatusBar({
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-claude-coral/40" />
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-claude-coral/70" />
                     </span>
-                    <span className="hidden text-claude-coral/80 sm:inline">Approval required</span>
+                    <span className="hidden text-claude-coral/80 sm:inline">
+                      {pendingDecisions} decision{pendingDecisions === 1 ? "" : "s"} pending
+                    </span>
                   </>
                 ) : (
                   <>
                     <ClaudeSparkle size={10} className="text-text-faint" />
-                    <span className="hidden text-[11px] text-text-faint sm:inline">Ready</span>
+                    <span className="hidden text-[11px] text-text-faint sm:inline">In sync</span>
                   </>
                 )}
               </div>
@@ -189,10 +193,10 @@ export function StatusBar({
               <span className="tabular-nums text-claude-coral/90">${estimatedArr.toFixed(2)}M</span>
               {" "}ARR
             </span>
-            <span className="hidden text-text-muted md:inline">{dealStage}</span>
+            <span className="hidden text-text-muted md:inline">{currentPhase}</span>
             <span className="text-text-muted">
-              <span className="tabular-nums text-text-secondary">{activeAgents}</span>
-              {" "}agents
+              <span className="tabular-nums text-text-secondary">{signalCount}</span>
+              {" "}signals
             </span>
           </div>
         </div>
@@ -205,7 +209,7 @@ export function StatusBar({
               <div>
                 <p className="text-[13px] font-medium text-text-primary">Claude API Key</p>
                 <p className="mt-1 text-[11px] text-text-muted">
-                  Saved locally in this browser and sent only with your requests.
+                  Demo-only local key storage for content generation in this workspace.
                 </p>
               </div>
               <button

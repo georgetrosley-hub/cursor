@@ -5,44 +5,34 @@ import { AppProvider, useApp } from "@/app/context/app-context";
 import { Sidebar, type SectionId } from "@/components/layout/sidebar";
 import { StatusBar } from "@/components/layout/status-bar";
 import { ChatPanel } from "@/components/layout/chat-panel";
-import { CommandCenter } from "@/components/sections/command-center";
-import { LiveAgentFeed } from "@/components/sections/live-agent-feed";
-import { OrgExpansionMap } from "@/components/sections/org-expansion-map";
-import { CompetitiveBattlefield } from "@/components/sections/competitive-battlefield";
-import { ArchitectureSecurity } from "@/components/sections/architecture-security";
-import { DealTimeline } from "@/components/sections/deal-timeline";
-import { ApprovalQueue } from "@/components/sections/approval-queue";
-import { ExecutiveNarrative } from "@/components/sections/executive-narrative";
-import { MeetingPrep } from "@/components/sections/meeting-prep";
-import { EmailStudio } from "@/components/sections/email-studio";
-import { ObjectionHandling } from "@/components/sections/objection-handling";
-import { UseCaseLibrary } from "@/components/sections/use-case-library";
-import { SecurityQA } from "@/components/sections/security-qa";
-import { ROICalculator } from "@/components/sections/roi-calculator";
+import { Overview } from "@/components/sections/overview";
+import { Stakeholders } from "@/components/sections/stakeholders";
+import { Execution } from "@/components/sections/execution";
+import { Signals } from "@/components/sections/signals";
+import { ArtifactsWorkspace } from "@/components/sections/artifacts-workspace";
 import { motion, AnimatePresence } from "framer-motion";
 
 function MainContent() {
-  const [activeSection, setActiveSection] = useState<SectionId>("command");
+  const [activeSection, setActiveSection] = useState<SectionId>("overview");
   const [chatOpen, setChatOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const {
     account,
     accounts,
-    agents,
-    events,
-    approvals,
-    orgNodes,
     competitors,
-    dealStages,
+    signals,
+    stakeholders,
+    executionItems,
     currentRecommendation,
     pipelineTarget,
+    currentPhase,
+    pendingDecisionCount,
     setAccountId,
-    lastApprovedTitle,
-    clearLastApproved,
-    handleApprove,
-    handleReject,
-    handleModify,
+    lastDecisionTitle,
+    clearLastDecision,
+    handleApproveDecision,
+    handleDeferDecision,
   } = useApp();
 
   const handleSectionChange = (section: SectionId) => {
@@ -60,104 +50,42 @@ function MainContent() {
     setMobileNavOpen(false);
   };
 
-  const forecastData = [
-    { month: "M1", land: account.estimatedLandValue * 0.1, expansion: 0 },
-    { month: "M3", land: account.estimatedLandValue * 0.4, expansion: account.estimatedExpansionValue * 0.05 },
-    { month: "M6", land: account.estimatedLandValue * 0.8, expansion: account.estimatedExpansionValue * 0.2 },
-    { month: "M9", land: account.estimatedLandValue, expansion: account.estimatedExpansionValue * 0.4 },
-    { month: "M12", land: account.estimatedLandValue, expansion: account.estimatedExpansionValue * 0.7 },
-  ];
-
-  const estimatedArr = account.estimatedLandValue + orgNodes.reduce((s, n) => s + n.arrPotential, 0) * 0.3;
-  const currentStage = dealStages.find((s) => s.current);
-  const activeAgentsCount = agents.filter((a) => a.status !== "idle").length;
-  const oversightStatus = approvals.some((a) => a.status === "pending") ? "active" as const : "idle" as const;
+  const estimatedArr = account.estimatedLandValue + account.estimatedExpansionValue * 0.35;
+  const oversightStatus = pendingDecisionCount > 0 ? "active" as const : "idle" as const;
 
   const sections: Record<SectionId, React.ReactNode> = {
-    command: (
-      <CommandCenter
+    overview: (
+      <Overview
         account={account}
-        agents={agents}
         competitors={competitors}
+        signals={signals}
+        stakeholders={stakeholders}
+        executionItems={executionItems}
+        pipelineTarget={pipelineTarget}
         currentRecommendation={currentRecommendation}
-        forecastData={forecastData}
       />
     ),
-    feed: (
-      <LiveAgentFeed
-        events={events}
-        account={account}
-        competitors={competitors}
+    stakeholders: (
+      <Stakeholders
+        stakeholders={stakeholders}
       />
     ),
-    competitive: (
-      <CompetitiveBattlefield
-        competitors={competitors}
-        account={account}
+    execution: (
+      <Execution
+        executionItems={executionItems}
+        lastDecisionTitle={lastDecisionTitle}
+        clearLastDecision={clearLastDecision}
+        onApproveDecision={handleApproveDecision}
+        onDeferDecision={handleDeferDecision}
       />
     ),
-    meeting: (
-      <MeetingPrep
-        account={account}
-        competitors={competitors}
+    signals: (
+      <Signals
+        signals={signals}
       />
     ),
-    email: (
-      <EmailStudio
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    objection: (
-      <ObjectionHandling
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    approval: (
-      <ApprovalQueue
-        approvals={approvals}
-        lastApprovedTitle={lastApprovedTitle}
-        clearLastApproved={clearLastApproved}
-        onApprove={handleApprove}
-        onReject={handleReject}
-        onModify={handleModify}
-      />
-    ),
-    org: (
-      <OrgExpansionMap
-        nodes={orgNodes}
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    timeline: <DealTimeline stages={dealStages} />,
-    architecture: (
-      <ArchitectureSecurity
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    usecases: (
-      <UseCaseLibrary
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    security: (
-      <SecurityQA
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    roi: (
-      <ROICalculator
-        account={account}
-        competitors={competitors}
-      />
-    ),
-    narrative: (
-      <ExecutiveNarrative
+    artifacts: (
+      <ArtifactsWorkspace
         account={account}
         competitors={competitors}
       />
@@ -184,8 +112,9 @@ function MainContent() {
           onAccountChange={handleAccountChange}
           pipelineTarget={pipelineTarget}
           estimatedArr={estimatedArr}
-          dealStage={currentStage?.label ?? "Pilot design"}
-          activeAgents={activeAgentsCount}
+          currentPhase={currentPhase}
+          signalCount={signals.length}
+          pendingDecisions={pendingDecisionCount}
           oversightStatus={oversightStatus}
           onOpenChat={handleOpenChat}
           onOpenMobileNav={() => setMobileNavOpen(true)}
@@ -200,7 +129,7 @@ function MainContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className={activeSection === "org" ? "mx-auto w-full max-w-[1600px]" : "mx-auto w-full max-w-5xl"}
+              className="mx-auto w-full max-w-6xl"
             >
               {sections[activeSection]}
             </motion.div>

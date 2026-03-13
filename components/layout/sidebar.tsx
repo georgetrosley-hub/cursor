@@ -4,21 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ClaudeSparkle } from "@/components/ui/claude-logo";
 import {
-  LayoutDashboard,
-  Activity,
-  Crosshair,
-  Calendar,
-  CheckSquare,
   FileText,
-  Network,
-  Shield,
   Users,
-  Mail,
-  MessageSquare,
-  BookOpen,
-  ShieldCheck,
-  Calculator,
   MessageCircle,
+  LayoutDashboard,
+  Radar,
+  Workflow,
   PanelLeftClose,
   PanelLeftOpen,
   X,
@@ -26,37 +17,18 @@ import {
 
 const sectionGroups = [
   {
+    label: "Workspace",
+    items: [
+      { id: "overview", label: "Overview", icon: LayoutDashboard },
+      { id: "stakeholders", label: "Stakeholders", icon: Users },
+      { id: "execution", label: "Execution", icon: Workflow },
+    ],
+  },
+  {
     label: "Intelligence",
     items: [
-      { id: "command", label: "Command Center", icon: LayoutDashboard },
-      { id: "feed", label: "Agent Activity", icon: Activity },
-      { id: "competitive", label: "Competitive Intel", icon: Crosshair },
-    ],
-  },
-  {
-    label: "Deal Execution",
-    items: [
-      { id: "meeting", label: "Meeting Prep", icon: Users },
-      { id: "email", label: "Email Studio", icon: Mail },
-      { id: "objection", label: "Objection Handling", icon: MessageSquare },
-      { id: "approval", label: "Approval Queue", icon: CheckSquare },
-    ],
-  },
-  {
-    label: "Strategy",
-    items: [
-      { id: "org", label: "Org Expansion", icon: Network },
-      { id: "timeline", label: "Deal Timeline", icon: Calendar },
-      { id: "architecture", label: "Architecture", icon: Shield },
-    ],
-  },
-  {
-    label: "Resources",
-    items: [
-      { id: "usecases", label: "Use Case Library", icon: BookOpen },
-      { id: "security", label: "Security Q&A", icon: ShieldCheck },
-      { id: "roi", label: "ROI Calculator", icon: Calculator },
-      { id: "narrative", label: "Exec Narrative", icon: FileText },
+      { id: "signals", label: "Signals", icon: Radar },
+      { id: "artifacts", label: "Artifacts", icon: FileText },
     ],
   },
 ] as const;
@@ -110,7 +82,7 @@ function SidebarBody({
                   Claude
                 </h1>
                 <p className="text-[11px] text-text-muted">
-                  Seller Hub
+                  Account OS
                 </p>
               </div>
             )}
@@ -217,7 +189,7 @@ function SidebarBody({
           {!compact && (
             <div className="min-w-0">
               <p className="truncate text-[12px] font-medium text-text-secondary">George Trosley</p>
-              <p className="text-[10px] text-text-faint">Enterprise AE · East</p>
+              <p className="text-[10px] text-text-faint">Enterprise AE · Strategic</p>
             </div>
           )}
         </div>

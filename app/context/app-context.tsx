@@ -1,193 +1,130 @@
 "use client";
 
-import React, { createContext, useContext, useCallback, useState, useEffect } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { accounts, defaultAccountId } from "@/data/accounts";
 import { createInitialAgents } from "@/data/agents";
 import { getCompetitorsByAccount } from "@/data/competitors";
 import {
-  generateEvent,
-  generateApprovalRequest,
-  updateAgentsFromEvent,
-  createInitialOrgNodes,
-  advanceOrgNodeOnApproval,
-} from "@/lib/simulation";
+  buildAccountSignals,
+  buildExecutionItems,
+  buildStakeholders,
+  getCurrentPhaseLabel,
+} from "@/data/account-ops";
 import type {
   Account,
   Agent,
-  SimulationEvent,
-  ApprovalRequest,
-  OrgNode,
-  DealStage,
+  AccountSignal,
+  ExecutionItem,
+  Stakeholder,
 } from "@/types";
-
-const DEAL_STAGES: { stage: DealStage; label: string }[] = [
-  { stage: "signal_detection", label: "Signal detection" },
-  { stage: "champion_identified", label: "Champion identified" },
-  { stage: "pov_selected", label: "POV / use case selected" },
-  { stage: "pilot_design", label: "Pilot design" },
-  { stage: "security_review", label: "Security review" },
-  { stage: "legal_review", label: "Legal review" },
-  { stage: "procurement", label: "Procurement process" },
-  { stage: "executive_alignment", label: "Executive alignment" },
-  { stage: "initial_deployment", label: "Initial deployment" },
-  { stage: "expansion_phase_1", label: "Expansion phase 1" },
-  { stage: "expansion_phase_2", label: "Expansion phase 2" },
-];
 
 interface AppState {
   accountId: string;
   account: Account;
   agents: Agent[];
-  events: SimulationEvent[];
-  approvals: ApprovalRequest[];
-  orgNodes: OrgNode[];
-  currentDealStageIndex: number;
+  signals: AccountSignal[];
+  stakeholders: Stakeholder[];
+  executionItems: ExecutionItem[];
+  currentPhase: string;
   currentRecommendation: string;
   pipelineTarget: number;
-  tick: number;
 }
 
 interface AppContextValue extends AppState {
   accounts: Account[];
   competitors: ReturnType<typeof getCompetitorsByAccount>;
-  dealStages: { stage: DealStage; label: string; completed: boolean; current: boolean; confidence: number; blockers: string[]; projectedArr: number }[];
+  pendingDecisionCount: number;
+  lastDecisionTitle: string | null;
   setAccountId: (id: string) => void;
-  lastApprovedTitle: string | null;
-  clearLastApproved: () => void;
-  handleApprove: (approvalId: string, title: string) => void;
-  handleReject: (approvalId: string) => void;
-  handleModify: (approvalId: string) => void;
+  clearLastDecision: () => void;
+  handleApproveDecision: (itemId: string) => void;
+  handleDeferDecision: (itemId: string) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [accountId, setAccountIdState] = useState(defaultAccountId);
-  const [tick, setTick] = useState(0);
   const [agents, setAgents] = useState<Agent[]>(() =>
     createInitialAgents()
   );
-  const [events, setEvents] = useState<SimulationEvent[]>(() => {
-    const initial: SimulationEvent[] = [];
-    for (let i = 0; i < 10; i++) {
-      const evt = generateEvent(defaultAccountId, i);
-      if (evt) initial.push(evt);
-    }
-    return initial;
+  const [executionItems, setExecutionItems] = useState<ExecutionItem[]>(() => {
+    const account = accounts.find((item) => item.id === defaultAccountId) ?? accounts[0];
+    return buildExecutionItems(account);
   });
-  const [approvals, setApprovals] = useState<ApprovalRequest[]>(() => {
-    const apr = generateApprovalRequest(defaultAccountId, 0);
-    return apr ? [apr] : [];
-  });
-  const [orgNodes, setOrgNodes] = useState<OrgNode[]>(() =>
-    createInitialOrgNodes(defaultAccountId)
-  );
-  const [currentDealStageIndex, setCurrentDealStageIndex] = useState(3);
-  const [lastApprovedTitle, setLastApprovedTitle] = useState<string | null>(null);
+  const [lastDecisionTitle, setLastDecisionTitle] = useState<string | null>(null);
 
   const account = accounts.find((a) => a.id === accountId) ?? accounts[0];
   const competitors = getCompetitorsByAccount(accountId);
+  const signals = useMemo(
+    () => buildAccountSignals(account, competitors),
+    [account, competitors]
+  );
+  const stakeholders = useMemo(() => buildStakeholders(account), [account]);
 
   const setAccountId = useCallback((id: string) => {
     setAccountIdState(id);
     setAgents(createInitialAgents());
-    setEvents([]);
-    const apr = generateApprovalRequest(id, 0);
-    setApprovals(apr ? [apr] : []);
-    setOrgNodes(createInitialOrgNodes(id));
-    setCurrentDealStageIndex(3);
-    setTick(0);
+    const nextAccount = accounts.find((item) => item.id === id) ?? accounts[0];
+    setExecutionItems(buildExecutionItems(nextAccount));
+    setLastDecisionTitle(null);
   }, []);
 
-  // Simulation loop — tuned for 3–4 min demo (events ~3s, approvals ~24s)
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 3000);
-    return () => clearInterval(interval);
-  }, []);
+  const clearLastDecision = useCallback(() => setLastDecisionTitle(null), []);
+  const handleApproveDecision = useCallback((itemId: string) => {
+    setExecutionItems((prev) =>
+      prev.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              decisionStatus: "approved" as const,
+              status: "in_progress" as const,
+            }
+          : item
+      )
+    );
+    const approvedItem = executionItems.find((item) => item.id === itemId);
+    setLastDecisionTitle(approvedItem?.title ?? "Decision recorded");
+  }, [executionItems]);
 
-  useEffect(() => {
-    const evt = generateEvent(accountId, tick);
-    if (evt) {
-      setEvents((prev) => [evt, ...prev].slice(0, 50));
-      setAgents((prev) => updateAgentsFromEvent(prev, evt));
-    }
-  }, [tick, accountId]);
-
-  useEffect(() => {
-    if (tick > 0 && tick % 8 === 0) {
-      const apr = generateApprovalRequest(accountId, tick);
-      if (apr) {
-        setApprovals((prev) => [apr, ...prev].filter((a) => a.status === "pending" || a.id === apr.id).slice(0, 5));
-      }
-    }
-  }, [tick, accountId]);
-
-  const clearLastApproved = useCallback(() => setLastApprovedTitle(null), []);
-
-  const handleApprove = useCallback(
-    (approvalId: string, title: string) => {
-      setApprovals((prev) =>
-        prev.map((a) =>
-          a.id === approvalId ? { ...a, status: "approved" as const } : a
-        )
-      );
-      setLastApprovedTitle(title);
-      setOrgNodes((prev) => advanceOrgNodeOnApproval(prev, title, true));
-      setCurrentDealStageIndex((i) => Math.min(i + 1, DEAL_STAGES.length - 1));
-    },
-    []
-  );
-
-  const handleReject = useCallback((approvalId: string) => {
-    setApprovals((prev) =>
-      prev.map((a) =>
-        a.id === approvalId ? { ...a, status: "rejected" as const } : a
+  const handleDeferDecision = useCallback((itemId: string) => {
+    setExecutionItems((prev) =>
+      prev.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              decisionStatus: "deferred" as const,
+            }
+          : item
       )
     );
   }, []);
 
-  const handleModify = useCallback((approvalId: string) => {
-    setApprovals((prev) =>
-      prev.map((a) =>
-        a.id === approvalId ? { ...a, status: "modified" as const } : a
-      )
-    );
-  }, []);
-
-  const dealStages = DEAL_STAGES.map((s, i) => ({
-    ...s,
-    completed: i < currentDealStageIndex,
-    current: i === currentDealStageIndex,
-    confidence: Math.min(95, 60 + (currentDealStageIndex - i) * 10 + Math.floor(tick % 5) * 2),
-    blockers: i === currentDealStageIndex ? account.topBlockers.slice(0, 2) : [],
-    projectedArr: account.estimatedLandValue * (1 + i * 0.15) + account.estimatedExpansionValue * (i / DEAL_STAGES.length) * 0.5,
-  }));
-
+  const currentPhase = getCurrentPhaseLabel(executionItems);
+  const pendingDecisionCount = executionItems.filter(
+    (item) => item.decisionRequired && item.decisionStatus === "pending"
+  ).length;
   const pipelineTarget = account.estimatedLandValue + account.estimatedExpansionValue * 0.4;
-  const currentRecommendation =
-    events[0]?.recommendedAction ??
-    `Proceed with ${account.firstWedge}. Schedule discovery call with platform engineering.`;
+  const currentRecommendation = signals[0]?.recommendedAction ?? `Proceed with ${account.firstWedge}.`;
 
   const value: AppContextValue = {
     accountId,
     account,
     agents,
-    events,
-    approvals,
-    orgNodes,
-    currentDealStageIndex,
+    signals,
+    stakeholders,
+    executionItems,
+    currentPhase,
     currentRecommendation,
     pipelineTarget,
-    tick,
     accounts,
     competitors,
-    dealStages,
+    pendingDecisionCount,
+    lastDecisionTitle,
     setAccountId,
-    lastApprovedTitle,
-    clearLastApproved,
-    handleApprove,
-    handleReject,
-    handleModify,
+    clearLastDecision,
+    handleApproveDecision,
+    handleDeferDecision,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

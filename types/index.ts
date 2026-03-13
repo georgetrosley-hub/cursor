@@ -86,6 +86,51 @@ export interface Account {
   topExpansionPaths: string[];
 }
 
+export type SignalSourceType =
+  | "call"
+  | "crm"
+  | "document"
+  | "market"
+  | "relationship";
+
+export interface AccountSignal {
+  id: string;
+  title: string;
+  summary: string;
+  priority: PriorityLevel;
+  confidence: number;
+  owner: string;
+  impact: string;
+  recommendedAction: string;
+  sourceType: SignalSourceType;
+  sourceLabel: string;
+  sourceFreshness: string;
+}
+
+export interface Stakeholder {
+  id: string;
+  name: string;
+  title: string;
+  team: string;
+  stance: "champion" | "ally" | "neutral" | "blocker" | "executive";
+  influence: "high" | "medium" | "low";
+  relationshipStrength: number;
+  nextStep: string;
+  note: string;
+}
+
+export interface ExecutionItem {
+  id: string;
+  title: string;
+  phase: string;
+  owner: string;
+  status: "in_progress" | "ready" | "blocked" | "complete";
+  dueLabel: string;
+  detail: string;
+  decisionRequired?: boolean;
+  decisionStatus?: "pending" | "approved" | "deferred";
+}
+
 export type DealStage =
   | "signal_detection"
   | "champion_identified"
