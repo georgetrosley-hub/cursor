@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { AlertTriangle, ArrowRight, Crosshair, Users, Eye, CircleDot, Zap, Target } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { SectionId } from "@/components/layout/sidebar";
@@ -102,10 +102,10 @@ export function Overview({
   );
   const staleItems = executionItems.filter((i) => isStale(i.lastUpdated));
 
-  return React.createElement(
-    "div",
-    { className: "space-y-10 sm:space-y-12" },
-    <>
+  return (
+    <div
+      className="space-y-10 sm:space-y-12"
+    >
       {/* VP oversight — 30-second scan for Ryan */}
       <section className="rounded-2xl border border-accent/20 bg-white/[0.02] p-4 sm:p-6">
         <div className="flex items-center gap-2">
@@ -201,13 +201,8 @@ export function Overview({
           </button>
           <button
             type="button"
-<<<<<<< HEAD
             onClick={() => onSectionChange?.("first90Days")}
-            className="flex min-h-[88px] touch-target flex-col justify-center rounded-xl border border-claude-coral/25 bg-surface-muted/50 px-4 py-4 text-left transition-colors active:bg-surface-muted/70 hover:bg-surface-muted/70 hover:border-claude-coral/40 sm:min-h-0 sm:py-3.5"
-=======
-            onClick={() => onSectionChange?.("first30Days")}
             className="flex min-h-[88px] touch-target flex-col justify-center rounded-xl border border-accent/25 bg-surface-muted/50 px-4 py-4 text-left transition-colors active:bg-surface-muted/70 hover:bg-surface-muted/70 hover:border-accent/40 sm:min-h-0 sm:py-3.5"
->>>>>>> 54c62ee4d230b0f27771a9d6e06d79314126b676
           >
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 shrink-0 text-accent" strokeWidth={2} />
@@ -391,6 +386,6 @@ export function Overview({
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }
