@@ -24,6 +24,7 @@ function MainContent() {
     signals,
     stakeholders,
     executionItems,
+    accountUpdates,
     workspaceDraft,
     currentRecommendation,
     pipelineTarget,
@@ -38,6 +39,7 @@ function MainContent() {
     updateStakeholderStance,
     updateExecutionStatus,
     updateSignalDisposition,
+    addAccountUpdate,
   } = useApp();
 
   const handleSectionChange = (section: SectionId) => {
@@ -66,10 +68,12 @@ function MainContent() {
         signals={signals}
         stakeholders={stakeholders}
         executionItems={executionItems}
+        accountUpdates={accountUpdates}
         workspaceDraft={workspaceDraft}
         pipelineTarget={pipelineTarget}
         currentRecommendation={currentRecommendation}
         onUpdateWorkspaceField={updateWorkspaceField}
+        onAddAccountUpdate={addAccountUpdate}
       />
     ),
     stakeholders: (

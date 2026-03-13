@@ -1,10 +1,11 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { accounts, defaultAccountId } from "@/data/accounts";
 import { createInitialAgents } from "@/data/agents";
 import { getCompetitorsByAccount } from "@/data/competitors";
 import {
+  buildAccountUpdates,
   buildAccountSignals,
   buildExecutionItems,
   buildStakeholders,
@@ -15,10 +16,13 @@ import type {
   Account,
   Agent,
   AccountSignal,
+  AccountUpdate,
   ExecutionItem,
   Stakeholder,
   WorkspaceDraft,
 } from "@/types";
+
+const WORKSPACE_STORAGE_KEY = "claude-enterprise-war-room-state";
 
 interface AppState {
   accountId: string;
@@ -27,6 +31,7 @@ interface AppState {
   signals: AccountSignal[];
   stakeholders: Stakeholder[];
   executionItems: ExecutionItem[];
+  accountUpdates: AccountUpdate[];
   workspaceDraft: WorkspaceDraft;
   currentPhase: string;
   currentRecommendation: string;
@@ -49,6 +54,7 @@ interface AppContextValue extends AppState {
     signalId: string,
     disposition: AccountSignal["disposition"]
   ) => void;
+  addAccountUpdate: (title: string, note: string, tag: AccountUpdate["tag"]) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -81,6 +87,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       accounts.map((account) => [account.id, buildExecutionItems(account)])
     )
   );
+  const [accountUpdatesByAccount, setAccountUpdatesByAccount] = useState<
+    Record<string, AccountUpdate[]>
+  >(() =>
+    Object.fromEntries(
+      accounts.map((account) => [account.id, buildAccountUpdates(account)])
+    )
+  );
   const [workspaceDraftsByAccount, setWorkspaceDraftsByAccount] = useState<
     Record<string, WorkspaceDraft>
   >(() =>
@@ -107,6 +120,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     () => executionItemsByAccount[accountId] ?? buildExecutionItems(account),
     [account, accountId, executionItemsByAccount]
   );
+  const accountUpdates = useMemo(
+    () => accountUpdatesByAccount[accountId] ?? buildAccountUpdates(account),
+    [account, accountId, accountUpdatesByAccount]
+  );
   const workspaceDraft = useMemo(
     () =>
       workspaceDraftsByAccount[accountId] ??
@@ -120,6 +137,62 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLastDecisionTitle(null);
   }, []);
 
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(WORKSPACE_STORAGE_KEY);
+      if (!stored) return;
+
+      const parsed = JSON.parse(stored) as Partial<{
+        signalsByAccount: Record<string, AccountSignal[]>;
+        stakeholdersByAccount: Record<string, Stakeholder[]>;
+        executionItemsByAccount: Record<string, ExecutionItem[]>;
+        accountUpdatesByAccount: Record<string, AccountUpdate[]>;
+        workspaceDraftsByAccount: Record<string, WorkspaceDraft>;
+      }>;
+
+      if (parsed.signalsByAccount) {
+        setSignalsByAccount((prev) => ({ ...prev, ...parsed.signalsByAccount }));
+      }
+      if (parsed.stakeholdersByAccount) {
+        setStakeholdersByAccount((prev) => ({ ...prev, ...parsed.stakeholdersByAccount }));
+      }
+      if (parsed.executionItemsByAccount) {
+        setExecutionItemsByAccount((prev) => ({ ...prev, ...parsed.executionItemsByAccount }));
+      }
+      if (parsed.accountUpdatesByAccount) {
+        setAccountUpdatesByAccount((prev) => ({ ...prev, ...parsed.accountUpdatesByAccount }));
+      }
+      if (parsed.workspaceDraftsByAccount) {
+        setWorkspaceDraftsByAccount((prev) => ({ ...prev, ...parsed.workspaceDraftsByAccount }));
+      }
+    } catch {
+      // Ignore invalid local state and fall back to seeded account data.
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        WORKSPACE_STORAGE_KEY,
+        JSON.stringify({
+          signalsByAccount,
+          stakeholdersByAccount,
+          executionItemsByAccount,
+          accountUpdatesByAccount,
+          workspaceDraftsByAccount,
+        })
+      );
+    } catch {
+      // Ignore storage failures in restricted environments.
+    }
+  }, [
+    accountUpdatesByAccount,
+    executionItemsByAccount,
+    signalsByAccount,
+    stakeholdersByAccount,
+    workspaceDraftsByAccount,
+  ]);
+
   const clearLastDecision = useCallback(() => setLastDecisionTitle(null), []);
   const handleApproveDecision = useCallback((itemId: string) => {
     setExecutionItemsByAccount((prev) => ({
@@ -130,6 +203,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               ...item,
               decisionStatus: "approved" as const,
               status: "in_progress" as const,
+              lastUpdated: "Updated just now",
             }
           : item
       ),
@@ -146,6 +220,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ? {
               ...item,
               decisionStatus: "deferred" as const,
+              lastUpdated: "Deferred just now",
             }
           : item
       ),
@@ -184,7 +259,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setExecutionItemsByAccount((prev) => ({
         ...prev,
         [accountId]: (prev[accountId] ?? executionItems).map((item) =>
-          item.id === itemId ? { ...item, status } : item
+          item.id === itemId
+            ? { ...item, status, lastUpdated: "Updated just now" }
+            : item
         ),
       }));
     },
@@ -203,6 +280,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [accountId, signals]
   );
 
+  const addAccountUpdate = useCallback(
+    (title: string, note: string, tag: AccountUpdate["tag"]) => {
+      const trimmedTitle = title.trim();
+      const trimmedNote = note.trim();
+
+      if (!trimmedTitle || !trimmedNote) {
+        return;
+      }
+
+      setAccountUpdatesByAccount((prev) => ({
+        ...prev,
+        [accountId]: [
+          {
+            id: `${accountId}-custom-${Date.now()}`,
+            createdAt: "Just now",
+            author: "George",
+            title: trimmedTitle,
+            note: trimmedNote,
+            tag,
+          },
+          ...(prev[accountId] ?? accountUpdates),
+        ].slice(0, 12),
+      }));
+    },
+    [accountId, accountUpdates]
+  );
+
   const currentPhase = getCurrentPhaseLabel(executionItems);
   const pendingDecisionCount = executionItems.filter(
     (item) => item.decisionRequired && item.decisionStatus === "pending"
@@ -217,6 +321,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     signals,
     stakeholders,
     executionItems,
+    accountUpdates,
     workspaceDraft,
     currentPhase,
     currentRecommendation,
@@ -233,6 +338,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     updateStakeholderStance,
     updateExecutionStatus,
     updateSignalDisposition,
+    addAccountUpdate,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

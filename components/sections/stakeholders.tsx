@@ -153,10 +153,32 @@ export function Stakeholders({
               </div>
             </div>
 
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Last touch</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                  {stakeholder.lastTouch}
+                </p>
+              </div>
+              <div className="rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Proof needed</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                  {stakeholder.proofNeeded}
+                </p>
+              </div>
+            </div>
+
             <div className="mt-4 rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
               <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Next step</p>
               <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
                 {stakeholder.nextStep}
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Recent moment</p>
+              <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                {stakeholder.recentMoment}
               </p>
             </div>
 
@@ -180,6 +202,9 @@ export function Stakeholders({
 
             <p className="mt-4 text-[13px] leading-relaxed text-text-muted">
               {stakeholder.note}
+            </p>
+            <p className="mt-3 text-[12px] leading-relaxed text-amber-200/80">
+              Risk: {stakeholder.risk}
             </p>
           </motion.article>
         ))}

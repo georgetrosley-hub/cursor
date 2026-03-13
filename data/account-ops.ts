@@ -1,6 +1,7 @@
 import type {
   Account,
   AccountSignal,
+  AccountUpdate,
   Competitor,
   ExecutionItem,
   PriorityLevel,
@@ -107,6 +108,41 @@ function getTopCompetitor(competitors: Competitor[]) {
 
 function getSecondSponsor(account: Account) {
   return parseSponsor(account.executiveSponsors[1] ?? account.executiveSponsors[0] ?? "Executive Sponsor");
+}
+
+function getLastTouchLabel(account: Account) {
+  if (account.id === "jpmorgan") return "Model risk intro call · Mon 09:30";
+  if (account.id === "comcast") return "Platform follow-up · Tue 14:00";
+  if (account.id === "pfizer") return "Medical affairs prep note · Wed 11:15";
+  return "Account review note · This week";
+}
+
+function getRecentMoment(account: Account) {
+  if (account.id === "jpmorgan") {
+    return "Model risk team reacted positively to a governed pilot framed around documentation and review workflows.";
+  }
+
+  if (account.id === "comcast") {
+    return "Platform engineering showed interest in a controlled developer productivity wedge if security gets clean deployment answers quickly.";
+  }
+
+  if (account.id === "pfizer") {
+    return "Regulated document workflows continue to resonate, but legal and validation concerns need a tighter response package.";
+  }
+
+  return "Recent conversations support a narrow first wedge, but the executive case still needs tightening.";
+}
+
+function getStakeholderRisk(account: Account) {
+  if (account.complianceComplexity >= 90) {
+    return "Will slow the deal if governance feels improvised.";
+  }
+
+  if (account.competitivePressure >= 85) {
+    return "Could drift toward incumbent convenience if the team does not create urgency.";
+  }
+
+  return "Needs sharper internal proof before they actively pull the deal forward.";
 }
 
 export function buildAccountSignals(
@@ -220,6 +256,10 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       relationshipStrength: 78,
       nextStep: "Turn the wedge into a measurable pilot with named success criteria.",
       note: champion.note,
+      lastTouch: getLastTouchLabel(account),
+      proofNeeded: "A pilot scope the champion can defend internally with clear success criteria.",
+      recentMoment: getRecentMoment(account),
+      risk: "If the pilot feels too broad, this stakeholder will struggle to sponsor it credibly.",
     },
     {
       id: `${account.id}-sponsor-1`,
@@ -231,6 +271,10 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       relationshipStrength: 64,
       nextStep: "Align on business value, not product capability.",
       note: "Needs to believe this is strategically useful and operationally safe.",
+      lastTouch: "Exec path mapped · This week",
+      proofNeeded: "A concise story that ties the wedge to measurable business value and low deployment risk.",
+      recentMoment: "Best used once the first pilot is concrete and the governance path looks disciplined.",
+      risk: "Will disengage if the story feels like a broad AI transformation pitch.",
     },
     {
       id: `${account.id}-sponsor-2`,
@@ -242,6 +286,10 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       relationshipStrength: 58,
       nextStep: "Use this leader to widen support once the first wedge is credible.",
       note: "Best used to reinforce urgency and unlock internal cross-functional coordination.",
+      lastTouch: "Sponsor planning note · This week",
+      proofNeeded: "A strong internal narrative plus evidence that the first wedge is governable.",
+      recentMoment: "Useful for expanding the internal coalition beyond the first functional buyer.",
+      risk: "Can become passive if the team waits too long to give them a crisp ask.",
     },
     {
       id: `${account.id}-security`,
@@ -253,6 +301,10 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       relationshipStrength: 38,
       nextStep: "Bring a clean deployment narrative before asking for approval.",
       note: "This stakeholder is not anti-Claude; they are anti-ambiguity.",
+      lastTouch: "Security prep queue · Pending",
+      proofNeeded: "Data flow, identity controls, retention posture, and a clearly bounded pilot scope.",
+      recentMoment: "This workstream will likely determine the speed of the deal.",
+      risk: getStakeholderRisk(account),
     },
     {
       id: `${account.id}-procurement`,
@@ -264,6 +316,10 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       relationshipStrength: 35,
       nextStep: "Start the commercial path earlier than feels necessary.",
       note: "The deal gets slower when procurement is treated as an end-stage surprise.",
+      lastTouch: "Commercial path not yet started",
+      proofNeeded: "Timing, expected spend, pilot-to-production path, and internal sponsor alignment.",
+      recentMoment: "Needs to be brought in before the pilot ends if the account is complex.",
+      risk: "Becomes a late-stage drag when commercial work starts after the technical proof is done.",
     },
   ];
 }
@@ -281,6 +337,8 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       status: "in_progress",
       dueLabel: "This week",
       detail: `Keep the first motion centered on ${account.firstWedge.toLowerCase()}. The goal is a narrow, defensible proof point.`,
+      checkpoint: "Pilot scope agreed with the functional champion",
+      lastUpdated: "Updated this morning",
     },
     {
       id: `${account.id}-security-review`,
@@ -292,6 +350,9 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       detail: account.topBlockers[1] ?? account.topBlockers[0],
       decisionRequired: true,
       decisionStatus: "pending",
+      checkpoint: "Security review scheduled with a written deployment narrative",
+      lastUpdated: "Waiting on scheduling",
+      blockerDetail: account.topBlockers[1] ?? account.topBlockers[0],
     },
     {
       id: `${account.id}-briefing`,
@@ -303,6 +364,8 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       detail: "Frame why now, why Claude, what the first win is, and what support is needed to move.",
       decisionRequired: true,
       decisionStatus: "pending",
+      checkpoint: "Executive sponsor has a usable internal brief",
+      lastUpdated: "Draft outline started",
     },
     {
       id: `${account.id}-procurement`,
@@ -315,6 +378,11 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       dueLabel: "This month",
       detail: account.topBlockers.find((blocker) => blocker.toLowerCase().includes("procurement")) ??
         "Commercial alignment should begin before the pilot is fully complete.",
+      checkpoint: "Commercial process started before technical proof is done",
+      lastUpdated: account.topBlockers.some((blocker) => blocker.toLowerCase().includes("procurement"))
+        ? "Blocked on sponsor timing"
+        : "Ready to open",
+      blockerDetail: account.topBlockers.find((blocker) => blocker.toLowerCase().includes("procurement")) ?? undefined,
     },
     {
       id: `${account.id}-expand`,
@@ -324,6 +392,8 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       status: "ready",
       dueLabel: "After pilot success criteria are defined",
       detail: "Keep expansion visible in the account story, but sequence it after the first wedge is secure.",
+      checkpoint: "Second motion has an owner, target team, and proof point from the first wedge",
+      lastUpdated: "Expansion thesis drafted",
     },
   ];
 }
@@ -340,6 +410,112 @@ export function buildWorkspaceDraft(
     thisWeekFocus: `Lock the pilot sponsor, define success criteria, and schedule the governance workstream before momentum stalls.`,
     operatorNotes: `Use executive alignment to create urgency, but keep the first ask narrow. This account should feel like a disciplined land-and-expand motion, not a broad transformation pitch.`,
   };
+}
+
+export function buildAccountUpdates(account: Account): AccountUpdate[] {
+  const sponsor = parseSponsor(account.executiveSponsors[0] ?? "Executive sponsor");
+  const baseUpdates: AccountUpdate[] = [
+    {
+      id: `${account.id}-update-1`,
+      createdAt: "Today · 08:20",
+      author: "George",
+      title: "Daily account reset",
+      note: `Kept the plan centered on ${account.firstWedge.toLowerCase()}. Need to protect the first wedge from turning into a broad platform discussion too early.`,
+      tag: "internal",
+    },
+    {
+      id: `${account.id}-update-2`,
+      createdAt: "Yesterday · 17:40",
+      author: "George",
+      title: "Competitive watch",
+      note: `Need sharper positioning against the incumbent before the next sponsor conversation. Bundling risk is real if the evaluation drifts.`,
+      tag: "risk",
+    },
+    {
+      id: `${account.id}-update-3`,
+      createdAt: "Yesterday · 13:15",
+      author: "George",
+      title: "Executive path",
+      note: `Use ${sponsor.name} to frame the first pilot as a safe business wedge, not a broad AI rollout.`,
+      tag: "exec",
+    },
+    {
+      id: `${account.id}-update-4`,
+      createdAt: "2 days ago · 09:10",
+      author: "George",
+      title: "Next step",
+      note: "Need the pilot scope, success criteria, and governance narrative on one page before the next major meeting.",
+      tag: "next_step",
+    },
+  ];
+
+  if (account.id === "jpmorgan") {
+    return [
+      {
+        id: `${account.id}-specific-1`,
+        createdAt: "Today · 07:55",
+        author: "George",
+        title: "Model risk path looks real",
+        note: "This account gets more interesting when we frame governance as the reason to buy Claude, not the reason to wait. The wedge still looks strongest in model risk documentation and review.",
+        tag: "call",
+      },
+      {
+        id: `${account.id}-specific-2`,
+        createdAt: "Yesterday · 16:10",
+        author: "George",
+        title: "Need a tighter sponsor ask",
+        note: `Before I bring ${sponsor.name} deeper in, I need a crisp internal brief that explains why this pilot is small, governable, and worth executive attention.`,
+        tag: "exec",
+      },
+      ...baseUpdates,
+    ];
+  }
+
+  if (account.id === "comcast") {
+    return [
+      {
+        id: `${account.id}-specific-1`,
+        createdAt: "Today · 09:05",
+        author: "George",
+        title: "Platform team is the cleanest opening",
+        note: "Developer productivity still feels like the easiest story to get through internal review, but only if the pilot stays tight and security gets answers early.",
+        tag: "call",
+      },
+      {
+        id: `${account.id}-specific-2`,
+        createdAt: "Yesterday · 15:25",
+        author: "George",
+        title: "Expansion should stay in the background",
+        note: `Support automation is the likely second act, but I should not oversell expansion before the platform pilot has a real owner and success metrics.`,
+        tag: "next_step",
+      },
+      ...baseUpdates,
+    ];
+  }
+
+  if (account.id === "pfizer") {
+    return [
+      {
+        id: `${account.id}-specific-1`,
+        createdAt: "Today · 08:45",
+        author: "George",
+        title: "Regulated workflow angle is resonating",
+        note: "The R&D / document workflow story is strong, but legal and validation will want a much more explicit deployment narrative before they buy into a pilot.",
+        tag: "call",
+      },
+      {
+        id: `${account.id}-specific-2`,
+        createdAt: "Yesterday · 14:50",
+        author: "George",
+        title: "Need a better proof package",
+        note: "Next step is to package the security and governance response in a way a regulated buyer can forward internally without translating it.",
+        tag: "risk",
+      },
+      ...baseUpdates,
+    ];
+  }
+
+  return baseUpdates;
 }
 
 export function getCurrentPhaseLabel(items: ExecutionItem[]) {

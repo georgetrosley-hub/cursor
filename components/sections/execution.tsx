@@ -128,6 +128,20 @@ export function Execution({
                 <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">
                   {item.detail}
                 </p>
+                <div className="mt-4 rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+                  <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Checkpoint</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                    {item.checkpoint}
+                  </p>
+                </div>
+                {item.blockerDetail && (
+                  <div className="mt-4 rounded-[20px] border border-amber-400/15 bg-amber-400/[0.06] px-4 py-4">
+                    <p className="text-[10px] uppercase tracking-[0.12em] text-amber-200/70">Current blocker</p>
+                    <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                      {item.blockerDetail}
+                    </p>
+                  </div>
+                )}
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     onClick={() => onApproveDecision(item.id)}
@@ -173,6 +187,28 @@ export function Execution({
             <p className="mt-4 text-[13px] leading-relaxed text-text-secondary">
               {item.detail}
             </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Checkpoint</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                  {item.checkpoint}
+                </p>
+              </div>
+              <div className="rounded-[20px] border border-white/8 bg-black/10 px-4 py-4">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-faint">Last updated</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                  {item.lastUpdated}
+                </p>
+              </div>
+            </div>
+            {item.blockerDetail && (
+              <div className="mt-4 rounded-[20px] border border-amber-400/15 bg-amber-400/[0.06] px-4 py-4">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-amber-200/70">Blocker detail</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                  {item.blockerDetail}
+                </p>
+              </div>
+            )}
             <div className="mt-4 flex flex-wrap gap-2">
               {(["ready", "in_progress", "blocked", "complete"] as const).map((status) => (
                 <button

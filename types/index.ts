@@ -118,6 +118,10 @@ export interface Stakeholder {
   relationshipStrength: number;
   nextStep: string;
   note: string;
+  lastTouch: string;
+  proofNeeded: string;
+  recentMoment: string;
+  risk: string;
 }
 
 export interface ExecutionItem {
@@ -130,6 +134,9 @@ export interface ExecutionItem {
   detail: string;
   decisionRequired?: boolean;
   decisionStatus?: "pending" | "approved" | "deferred";
+  checkpoint: string;
+  lastUpdated: string;
+  blockerDetail?: string;
 }
 
 export interface WorkspaceDraft {
@@ -137,6 +144,15 @@ export interface WorkspaceDraft {
   winTheme: string;
   thisWeekFocus: string;
   operatorNotes: string;
+}
+
+export interface AccountUpdate {
+  id: string;
+  createdAt: string;
+  author: string;
+  title: string;
+  note: string;
+  tag: "call" | "internal" | "risk" | "next_step" | "exec";
 }
 
 export type DealStage =
