@@ -176,7 +176,7 @@ export function Overview({
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className="flex flex-col rounded-xl border border-surface-border bg-surface-muted px-4 py-3.5 shadow-elevated">
+          <div className="flex flex-col rounded-xl border border-surface-border bg-surface px-4 py-3.5 shadow-elevated">
             <div className="flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-accent" strokeWidth={2} />
               <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">This week</p>
