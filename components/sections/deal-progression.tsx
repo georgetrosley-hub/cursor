@@ -6,7 +6,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { ClaudeActionBar } from "@/components/ui/claude-action-bar";
 import { getFlagshipDealContext } from "@/data/flagship-deals";
 import { useToast } from "@/app/context/toast-context";
-import { getPlansForThisWeek, getPlansForThisWeekShort } from "@/lib/plans-for-week";
+import { getPlansForThisWeek } from "@/lib/plans-for-week";
 import type { Account, AccountUpdate, Competitor, ExecutionItem, WorkspaceDraft } from "@/types";
 
 interface DealProgressionProps {
@@ -36,7 +36,6 @@ export function DealProgression({
   const { showToast } = useToast();
   const flagshipDeal = getFlagshipDealContext(account.id);
   const plansForThisWeek = getPlansForThisWeek(accountUpdates, executionItems);
-  const plansForThisWeekShort = getPlansForThisWeekShort(accountUpdates, executionItems);
 
   const handleWorkspaceFieldChange = useCallback(
     (field: keyof WorkspaceDraft, value: string) => {
@@ -166,24 +165,6 @@ export function DealProgression({
             </div>
 
             <div>
-              <label className="mb-2 block text-[11px] font-medium uppercase tracking-[0.12em] text-text-faint">
-                Plans for this week
-              </label>
-              <button
-                type="button"
-                onClick={() => document.getElementById("plans-for-this-week-detail")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="w-full rounded-[22px] border border-claude-coral/25 bg-surface-muted/20 px-4 py-3 text-left transition-colors hover:border-claude-coral/40 hover:bg-surface-muted/30 active:bg-surface-muted/40"
-              >
-                <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-text-secondary">
-                  {plansForThisWeekShort}
-                </p>
-                <p className="mt-1.5 text-[11px] text-text-faint">
-                  Tap for full detail ↓
-                </p>
-              </button>
-            </div>
-
-            <div>
               <label className="mb-2 block text-[11px] font-medium uppercase tracking-[0.12em] text-claude-coral">
                 Operator notes
               </label>
@@ -251,18 +232,6 @@ export function DealProgression({
           ]}
         />
       </div>
-
-      <section id="plans-for-this-week-detail" className="scroll-mt-6 space-y-4">
-        <SectionHeader
-          title="Plans for this week · full detail"
-          subtitle="Generated from last week's notes and where things need to progress."
-        />
-        <div className="rounded-2xl border border-claude-coral/20 bg-surface-muted/50 p-4 sm:p-6">
-          <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-text-secondary">
-            {plansForThisWeek}
-          </p>
-        </div>
-      </section>
     </motion.div>
   );
 }
