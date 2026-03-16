@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { CursorLogo } from "@/components/ui/cursor-logo";
+import { AppIcon } from "@/components/ui/app-icon";
 import {
   FileText,
   Users,
@@ -98,8 +98,8 @@ function SidebarBody({
       <div className={cn("relative px-5 py-5", compact && "px-3 py-4")}>
         <div className="flex items-center justify-between gap-2">
           <div className={cn("flex items-center gap-2", compact && "justify-center")}>
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/10">
-              <CursorLogo size={14} className="text-accent" />
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-md bg-surface-muted/50">
+              <AppIcon size={20} className="object-contain" />
             </div>
             {!compact && (
               <div>

@@ -27,7 +27,11 @@ export const metadata: Metadata = {
   title: "Cursor Enterprise GTM | Account & Deal Tracking",
   description: "Internal Cursor app for Enterprise GTM AEs — track accounts, deal flow, pipeline, and execution.",
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff3621' stroke-width='2'><path d='M5 4h8a3 3 0 013 3v10a3 3 0 01-3 3H8l-3 3V4z'/><circle cx='16' cy='8' r='1.5' fill='%23ff3621'/></svg>",
+    icon: [
+      { url: "/app-icon-dark.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/app-icon-light.png", media: "(prefers-color-scheme: light)" },
+    ],
+    apple: "/app-icon-light.png",
   },
 };
 

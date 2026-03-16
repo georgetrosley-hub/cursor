@@ -16,7 +16,7 @@ import {
 import { useApiKey } from "@/app/context/api-key-context";
 import { useTheme } from "@/app/context/theme-context";
 import { cn } from "@/lib/utils";
-import { CursorLogo } from "@/components/ui/cursor-logo";
+import { AppIcon } from "@/components/ui/app-icon";
 import type { Account } from "@/types";
 import type { DealHealthSummary } from "@/lib/deal-health";
 
@@ -162,7 +162,7 @@ export function StatusBar({
                   </>
                 ) : (
                   <>
-                    <CursorLogo size={10} className="text-text-faint" />
+                    <AppIcon size={16} className="opacity-70" />
                     <span className="hidden text-[11px] text-text-faint sm:inline">In sync</span>
                   </>
                 )}
