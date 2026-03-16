@@ -16,7 +16,7 @@ import {
 import { useApiKey } from "@/app/context/api-key-context";
 import { useTheme } from "@/app/context/theme-context";
 import { cn } from "@/lib/utils";
-import { OpenAILogo } from "@/components/ui/openai-logo";
+import { CursorLogo } from "@/components/ui/cursor-logo";
 import type { Account } from "@/types";
 import type { DealHealthSummary } from "@/lib/deal-health";
 
@@ -146,7 +146,7 @@ export function StatusBar({
                   className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] text-text-secondary transition-colors hover:bg-surface-muted/30 hover:text-text-primary"
                 >
                   <MessageCircle className="h-3 w-3" />
-                  <span className="hidden sm:inline">Ask ChatGPT</span>
+                  <span className="hidden sm:inline">Ask Cursor</span>
                 </button>
               )}
               <div className="flex items-center gap-2 text-[11px]">
@@ -162,7 +162,7 @@ export function StatusBar({
                   </>
                 ) : (
                   <>
-                    <OpenAILogo size={10} className="text-text-faint" />
+                    <CursorLogo size={10} className="text-text-faint" />
                     <span className="hidden text-[11px] text-text-faint sm:inline">In sync</span>
                   </>
                 )}
@@ -232,7 +232,7 @@ export function StatusBar({
                   type="password"
                   value={draftApiKey}
                   onChange={(e) => setDraftApiKey(e.target.value)}
-                  placeholder="sk-ant-..."
+                  placeholder="sk-ant-... or your API key"
                   className="w-full rounded-lg border border-surface-border/50 bg-surface px-3 py-2.5 text-[13px] text-text-primary placeholder:text-text-muted/60 focus:border-accent/30 focus:outline-none"
                 />
               </div>

@@ -143,7 +143,7 @@ function getRecentMoment(account: Account) {
     return "Platform engineering discovery underway. Evaluating best-of-breed vs integrated AI strategy.";
   }
   if (account.id === "nvidia") {
-    return "AI/ML team interested in Claude for internal workflows. Build vs buy evaluation in progress.";
+    return "AI/ML team interested in Cursor for internal workflows. Build vs buy evaluation in progress.";
   }
   if (account.id === "capital-one") {
     return "POV selected. Pilot scope draft in progress. Compliance and security reviews scheduled.";
@@ -242,7 +242,7 @@ export function buildAccountSignals(
       confidence: 76,
       owner: secondSponsor.name,
       impact: "A stronger narrative shortens the gap between functional interest and sponsor-level commitment.",
-      recommendedAction: `Prepare a briefing for ${secondSponsor.name} that names why now, why Claude, what the first proof point is, and what support is needed.`,
+      recommendedAction: `Prepare a briefing for ${secondSponsor.name} that names why now, why Cursor, what the first proof point is, and what support is needed.`,
       sourceType: "crm",
       sourceLabel: "Executive account summary",
       sourceFreshness: "Working hypothesis",
@@ -324,7 +324,7 @@ export function buildStakeholders(account: Account): Stakeholder[] {
       influence: "high",
       relationshipStrength: 38,
       nextStep: "Bring a clean deployment narrative before asking for approval.",
-      note: "This stakeholder is not anti-Claude; they are anti-ambiguity.",
+      note: "This stakeholder is not anti-Cursor; they are anti-ambiguity.",
       lastTouch: "Security prep queue · Pending",
       proofNeeded: "Data flow, identity controls, retention posture, and a clearly bounded pilot scope.",
       recentMoment: "This workstream will likely determine the speed of the deal.",
@@ -385,7 +385,7 @@ export function buildExecutionItems(account: Account): ExecutionItem[] {
       owner: primarySponsor.name,
       status: "ready",
       dueLabel: "Before next sponsor sync",
-      detail: "Frame why now, why Claude, what the first win is, and what support is needed to move.",
+      detail: "Frame why now, why Cursor, what the first win is, and what support is needed to move.",
       decisionRequired: true,
       decisionStatus: "pending",
       checkpoint: "Executive sponsor has a usable internal brief",

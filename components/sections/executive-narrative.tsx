@@ -6,7 +6,7 @@ import { FileText, Presentation, BarChart3 } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { StreamingContent } from "@/components/ui/streaming-content";
 import { useStreaming } from "@/lib/hooks/use-streaming";
-import { OpenAILogo } from "@/components/ui/openai-logo";
+import { CursorLogo } from "@/components/ui/cursor-logo";
 import type { Account, Competitor } from "@/types";
 
 interface ExecutiveNarrativeProps {
@@ -55,7 +55,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
         messages: [
           {
             role: "user",
-            content: `Generate a board-level summary for ${account.name}. This should be a 1-page executive brief suitable for sharing with OpenAI leadership. Include: account overview, strategic importance, deal status, revenue potential ($${account.estimatedLandValue}M land / $${account.estimatedExpansionValue}M expansion), key risks, competitive dynamics, and what we need from leadership to win. Keep it concise and strategic.`,
+            content: `Generate a board-level summary for ${account.name}. This should be a 1-page executive brief suitable for sharing with Cursor leadership. Include: account overview, strategic importance, deal status, revenue potential ($${account.estimatedLandValue}M land / $${account.estimatedExpansionValue}M expansion), key risks, competitive dynamics, and what we need from leadership to win. Keep it concise and strategic.`,
           },
         ],
         account,
@@ -65,9 +65,9 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
   }, [account, competitors, boardSummary]);
 
   const defaultNarrative = {
-    whyNow: "Account is evaluating AI tools. OpenAI and Microsoft are in the mix — need to move with clear governance and differentiation.",
-    whyClaude: "Constitutional AI, strong enterprise governance, predictable model behavior. Safe choice for regulated or high-stakes workflows.",
-    whyNot: "OpenAI and Copilot have broad adoption. Need to differentiate on safety, enterprise controls, and no training on customer data.",
+    whyNow: "Account is evaluating AI-powered development tools. GitHub Copilot and others are in the mix — need to move with clear differentiation on codebase understanding and agentic workflows.",
+    whyClaude: "Best-in-class AI for code, codebase indexing, agents that build and test. Trusted by Fortune 500. SOC 2, bring-your-own-model.",
+    whyNot: "Copilot and others have broad adoption. Need to differentiate on codebase-native AI, Tab + Composer + Agents, and enterprise controls.",
     impact: "Enterprise AI adoption, knowledge workflows, and expansion into core business use cases.",
     governance: "SOC 2, audit trail, data residency. Security and Legal review in progress.",
     rollout: "Phase 1: Pilot with controlled team. Phase 2: Broader deployment. Phase 3: Enterprise standard.",
@@ -76,7 +76,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
   const staticNarratives: Record<string, typeof defaultNarrative> = {
     pfizer: {
       whyNow: "Medical Affairs exploring regulated document workflows. Legal and Quality want explicit deployment narrative before sign-off.",
-      whyClaude: "Strong governance posture. Constitutional AI. Safe choice for regulated environment. No training on customer data.",
+      whyClaude: "Strong governance posture. Code stays in your control. Safe choice for regulated environment. SOC 2, secure indexing.",
       whyNot: "Microsoft Copilot, internal tools. Need proof package Legal and Quality can forward internally.",
       impact: "R&D knowledge retrieval, document workflows, clinical support.",
       governance: "Data residency, access controls, audit trail. Legal and Quality sign-off required.",
@@ -84,7 +84,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
     },
     jpmorgan: {
       whyNow: "Developer productivity and AI governance are top priorities. Architecture review scheduled — need clear deployment narrative.",
-      whyClaude: "Enterprise controls, no training on customer data, strong governance. Fits regulated financial services requirements.",
+      whyClaude: "Enterprise controls, codebase stays private, strong governance. Fits regulated financial services requirements.",
       whyNot: "Microsoft Copilot, internal builds. Differentiate on governance and best-of-breed model choice.",
       impact: "Developer productivity, operations automation, path to expansion.",
       governance: "Regulatory and audit requirements. Architecture and security review in progress.",
@@ -99,7 +99,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
 
   const sections = [
     { label: "Why now", content: n.whyNow },
-    { label: "Why ChatGPT", content: n.whyClaude },
+    { label: "Why Cursor", content: n.whyClaude },
     { label: "Alternatives", content: n.whyNot },
     { label: "Impact", content: n.impact },
     { label: "Governance", content: n.governance },
@@ -138,7 +138,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
         ))}
         <div className="pt-3 border-t border-surface-border/40">
           <div className="flex items-center gap-2 mb-2">
-            <OpenAILogo size={10} className="text-accent/40" />
+            <CursorLogo size={10} className="text-accent/40" />
             <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent/50">Value · Sponsors</p>
           </div>
           <p className="text-[13px] text-text-secondary leading-relaxed">
@@ -154,7 +154,7 @@ export function ExecutiveNarrative({ account, competitors }: ExecutiveNarrativeP
           disabled={narrative.isStreaming}
           className="flex items-center gap-2 rounded-lg border border-accent/20 bg-accent/[0.06] px-4 py-2.5 text-[13px] font-medium text-accent/90 hover:bg-accent/10 transition-colors disabled:opacity-50"
         >
-          <OpenAILogo size={14} />
+          <CursorLogo size={14} />
           {narrativeLoaded ? "Refresh Full Narrative" : "Generate Full Narrative"}
         </button>
         <button

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { OpenAILogo } from "@/components/ui/openai-logo";
+import { CursorLogo } from "@/components/ui/cursor-logo";
 import {
   FileText,
   Users,
@@ -53,7 +53,7 @@ const sectionGroups = [
       { id: "useCaseLibrary", label: "Use Case Library", icon: Lightbulb },
       { id: "roiCalculator", label: "ROI Calculator", icon: Calculator },
       { id: "territoryEngine", label: "Territory Engine", icon: Cpu },
-      { id: "enterpriseComparison", label: "ChatGPT vs Competitors", icon: Shield },
+      { id: "enterpriseComparison", label: "Cursor vs Competitors", icon: Shield },
     ],
   },
 ] as const;
@@ -99,12 +99,12 @@ function SidebarBody({
         <div className="flex items-center justify-between gap-2">
           <div className={cn("flex items-center gap-2", compact && "justify-center")}>
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/10">
-              <OpenAILogo size={14} className="text-accent" />
+              <CursorLogo size={14} className="text-accent" />
             </div>
             {!compact && (
               <div>
                 <h1 className="text-[13px] font-semibold tracking-tight text-text-primary">
-                  ChatGPT
+                  Cursor
                 </h1>
                 <p className="text-[11px] text-text-muted">
                   Enterprise GTM
@@ -151,11 +151,11 @@ function SidebarBody({
             "flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-accent/20 bg-accent/[0.06] px-3 py-3 text-[12px] font-medium text-accent transition-colors active:bg-accent/10 hover:bg-accent/10",
             compact && "justify-center px-0 py-2 min-h-[40px]"
           )}
-          aria-label="Ask ChatGPT"
-          title="Ask ChatGPT"
+          aria-label="Ask Cursor"
+          title="Ask Cursor"
         >
           <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.8} />
-          {!compact && "Ask ChatGPT"}
+          {!compact && "Ask Cursor"}
         </button>
       </div>
 
@@ -223,7 +223,7 @@ function SidebarBody({
       {!compact && (
         <div className="px-5 pb-4">
           <p className="text-[10px] text-text-faint/60">
-            Built for OpenAI
+            Cursor Internal
           </p>
         </div>
       )}

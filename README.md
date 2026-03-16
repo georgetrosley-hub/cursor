@@ -1,29 +1,22 @@
-# How I'd Build Pipeline and Expansion for Claude Enterprise
+# Cursor Enterprise GTM — Account & Deal Tracking
 
-This project is a GTM artifact, not a product marketing exercise.
+Internal Cursor app for **Enterprise GTM Account Executives** to track accounts, deal flow, pipeline, and execution. Built to feel like a native Cursor internal product.
 
-It is meant to show how I think about large enterprise Claude deals:
-- how I would create a credible first wedge
-- how I would build a champion path
-- how I would design the initial pilot
-- how I would handle security, procurement, and executive alignment
-- how I would map the expansion motion after the first win
+## What it does
 
-## What the artifact includes
+- **Territory & War Room** — Single view of account thesis, first wedge, champion path, pilot design, competitive displacement, and expansion
+- **Stakeholder Map** — Who to build with, where to expect friction, how to multi-thread the deal
+- **Deal Plan** — Land, governance, exec alignment, commercial path, expansion
+- **Deal Signals** — Hypotheses to pressure-test in discovery and execution
+- **Field Kit** — Executive briefs, meeting prep, emails, objection talk tracks, security responses, battle cards (Cursor vs competitors)
 
-- **Capture Plan** — The core account thesis, the first wedge, the pilot logic, and the competitive displacement plan
-- **Stakeholder Map** — Who I would build with, where I would expect friction, and how I would multi-thread the deal
-- **Deal Plan** — The sequence I would run: land, governance, exec alignment, commercial path, expansion
-- **Deal Signals** — The working hypotheses I would pressure-test in discovery and deal execution
-- **Field Kit** — The actual materials I would use to move the deal: executive briefs, meeting prep, emails, objection talk tracks, security responses, and battle cards
-
-Today this is still a **prototype**. Some of the account logic is modeled from account metadata rather than pulled from real systems. The point is to show GTM judgment and operating style, with Claude used as an assistive layer for deal execution.
+Switch accounts (JPMorgan, Pfizer, Comcast, etc.) from the header to see how the capture plan, stakeholder map, deal plan, and field kit shift by account.
 
 ## Environment variables
 
 Set these to enable chat and content generation:
 
-- **ANTHROPIC_API_KEY** — Your Claude API key (or add via the API Key button in the app)
+- **ANTHROPIC_API_KEY** — API key for the AI layer (or add via the API Key button in the app)
 
 ## Run it
 
@@ -32,12 +25,12 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Switch accounts (JPMorgan, Pfizer, Comcast, etc.) from the header to see how the capture plan, stakeholder map, deal plan, and field kit shift by account.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Tech stack
 
-Next.js 14, TypeScript, Tailwind CSS, Framer Motion, Recharts. Claude API. Prototype-grade, mostly client-side.
+Next.js 14, TypeScript, Tailwind CSS, Framer Motion, Recharts. Claude API for chat/generation. Prototype-grade, mostly client-side.
 
 ---
 
-Built by George Trosley. If you'd like to explore this further, I'd love to talk.
+Cursor Internal · Enterprise GTM

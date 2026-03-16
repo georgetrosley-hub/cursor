@@ -8,42 +8,42 @@ type Strength = "strong" | "strongest" | "moderate" | "improving" | "unknown";
 
 const rows: {
   factor: string;
-  claude: Strength;
+  cursor: Strength;
+  copilot: Strength;
   openai: Strength;
-  gemini: Strength;
-  mistral?: Strength;
+  gemini?: Strength;
 }[] = [
   {
-    factor: "Safety alignment",
-    claude: "strongest",
+    factor: "Codebase understanding",
+    cursor: "strongest",
+    copilot: "moderate",
     openai: "moderate",
-    gemini: "moderate",
-    mistral: "moderate",
+    gemini: "unknown",
   },
   {
     factor: "Enterprise governance",
-    claude: "strong",
-    openai: "improving",
-    gemini: "unknown",
-    mistral: "unknown",
-  },
-  {
-    factor: "Model behavior",
-    claude: "strong",
-    openai: "moderate",
-    gemini: "moderate",
-  },
-  {
-    factor: "Data & training posture",
-    claude: "strong",
-    openai: "moderate",
-    gemini: "moderate",
-  },
-  {
-    factor: "Regulated industry fit",
-    claude: "strong",
+    cursor: "strong",
+    copilot: "improving",
     openai: "moderate",
     gemini: "unknown",
+  },
+  {
+    factor: "Agentic workflows",
+    cursor: "strong",
+    copilot: "moderate",
+    openai: "moderate",
+  },
+  {
+    factor: "Data & indexing posture",
+    cursor: "strong",
+    copilot: "moderate",
+    openai: "moderate",
+  },
+  {
+    factor: "Regulated / security fit",
+    cursor: "strong",
+    copilot: "moderate",
+    openai: "moderate",
   },
 ];
 
@@ -95,8 +95,8 @@ export function EnterpriseComparison() {
       className="space-y-8 sm:space-y-10"
     >
       <SectionHeader
-        title="ChatGPT vs Competitors"
-        subtitle="Enterprise buying decisions — safety, governance, and model behavior. Not marketing fluff."
+        title="Cursor vs Competitors"
+        subtitle="Enterprise buying decisions — codebase AI, governance, and agentic workflows. How we win deals."
       />
 
       <div className="overflow-x-auto">
@@ -107,16 +107,16 @@ export function EnterpriseComparison() {
                 Factor
               </th>
               <th className="px-4 pb-3 text-left text-[10px] font-medium uppercase tracking-wider text-accent">
-                ChatGPT
+                Cursor
+              </th>
+              <th className="px-4 pb-3 text-left text-[10px] font-medium uppercase tracking-wider text-text-faint">
+                Copilot
               </th>
               <th className="px-4 pb-3 text-left text-[10px] font-medium uppercase tracking-wider text-text-faint">
                 OpenAI
               </th>
               <th className="px-4 pb-3 text-left text-[10px] font-medium uppercase tracking-wider text-text-faint">
                 Gemini
-              </th>
-              <th className="px-4 pb-3 text-left text-[10px] font-medium uppercase tracking-wider text-text-faint">
-                Mistral
               </th>
             </tr>
           </thead>
@@ -133,16 +133,16 @@ export function EnterpriseComparison() {
                   {row.factor}
                 </td>
                 <td className="px-4 py-3">
-                  <StrengthBadge s={row.claude} />
+                  <StrengthBadge s={row.cursor} />
+                </td>
+                <td className="px-4 py-3">
+                  <StrengthBadge s={row.copilot} />
                 </td>
                 <td className="px-4 py-3">
                   <StrengthBadge s={row.openai} />
                 </td>
                 <td className="px-4 py-3">
-                  <StrengthBadge s={row.gemini} />
-                </td>
-                <td className="px-4 py-3">
-                  <StrengthBadge s={row.mistral ?? "unknown"} />
+                  <StrengthBadge s={row.gemini ?? "unknown"} />
                 </td>
               </motion.tr>
             ))}
@@ -157,7 +157,7 @@ export function EnterpriseComparison() {
             Deal positioning intelligence
           </p>
           <p className="mt-1 text-[11px] text-text-muted">
-            I use this framing to help enterprise buyers compare on what matters: governance, auditability, and predictable model behavior — not just capability.
+            Use this framing to help enterprise buyers compare on what matters: codebase-native AI, secure indexing, and agentic workflows — not just completions.
           </p>
         </div>
       </div>

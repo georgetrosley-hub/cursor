@@ -68,7 +68,7 @@ export function AccountIntelligence({
     >
       <SectionHeader
         title="Account intelligence"
-        subtitle={`Everything you need on ${account.name}: AI initiatives, leadership, competitive landscape, entry points, and Claude use cases.`}
+        subtitle={`Everything you need on ${account.name}: dev initiatives, leadership, competitive landscape, entry points, and Cursor use cases.`}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -233,7 +233,7 @@ export function AccountIntelligence({
         </div>
       </section>
 
-      {/* Claude use cases */}
+      {/* Cursor use cases */}
       <section className="rounded-2xl border border-surface-border/40 bg-surface-elevated/30 p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-2">
@@ -241,7 +241,7 @@ export function AccountIntelligence({
               <Sparkles className="h-4 w-4 text-violet-400" strokeWidth={1.8} />
             </div>
             <h3 className="text-[13px] font-semibold uppercase tracking-wider text-text-primary">
-              Claude use cases
+              Cursor use cases
             </h3>
           </div>
           {onNavigateTo && (

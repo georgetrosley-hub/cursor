@@ -6,7 +6,7 @@ import { RefreshCw } from "lucide-react";
 import { useApiKey } from "@/app/context/api-key-context";
 import { SectionHeader } from "@/components/ui/section-header";
 import { LiveEventCard } from "@/components/ui/live-event-card";
-import { OpenAILogo } from "@/components/ui/openai-logo";
+import { CursorLogo } from "@/components/ui/cursor-logo";
 import { readApiErrorMessage } from "@/lib/client/api";
 import type { SimulationEvent, Account, Competitor } from "@/types";
 
@@ -70,7 +70,7 @@ export function LiveAgentFeed({ events, account, competitors }: LiveAgentFeedPro
       const message =
         error instanceof Error
           ? error.message
-          : "Add your Claude API key in the top right and try again.";
+          : "Add your API key in the top right and try again.";
       const errorEvent: SimulationEvent = {
         id: `ai-error-${Date.now()}`,
         timestamp: new Date(),
@@ -79,7 +79,7 @@ export function LiveAgentFeed({ events, account, competitors }: LiveAgentFeedPro
         type: "research_signal",
         title: "AI request needs attention",
         explanation: message,
-        recommendedAction: "Update your Claude API key from the top right, then retry.",
+        recommendedAction: "Update your API key from the top right, then retry.",
       };
 
       setAiEvents((prev): SimulationEvent[] => [
@@ -116,7 +116,7 @@ export function LiveAgentFeed({ events, account, competitors }: LiveAgentFeedPro
             {isGenerating ? (
               <RefreshCw className="h-3 w-3 animate-spin" />
             ) : (
-              <OpenAILogo size={10} />
+              <CursorLogo size={10} />
             )}
             Generate AI Insight
           </button>
@@ -132,7 +132,7 @@ export function LiveAgentFeed({ events, account, competitors }: LiveAgentFeedPro
 
       {aiEvents.length > 0 && (
         <div className="mb-3 flex items-center gap-2">
-          <OpenAILogo size={10} className="text-accent/50" />
+          <CursorLogo size={10} className="text-accent/50" />
           <span className="text-[11px] text-accent/60">
             {aiEvents.length} AI-generated insight{aiEvents.length > 1 ? "s" : ""}
           </span>

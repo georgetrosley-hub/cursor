@@ -24,10 +24,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Enterprise GTM | OpenAI-Style War Room",
-  description: "How I'd build pipeline and expansion for enterprise AI — built to feel like an OpenAI product.",
+  title: "Cursor Enterprise GTM | Account & Deal Tracking",
+  description: "Internal Cursor app for Enterprise GTM AEs — track accounts, deal flow, pipeline, and execution.",
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'><path fill='%2310a37f' d='M12 2L14 8L20 9L15 12L16 18L12 15L8 18L9 12L4 9L10 8L12 2Z'/></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff3621' stroke-width='2'><path d='M5 4h8a3 3 0 013 3v10a3 3 0 01-3 3H8l-3 3V4z'/><circle cx='16' cy='8' r='1.5' fill='%23ff3621'/></svg>",
   },
 };
 
@@ -39,7 +39,7 @@ export default function RootLayout({
   const themeScript = `
     (() => {
       try {
-        var s = localStorage.getItem("openai-gtm-theme");
+        var s = localStorage.getItem("cursor-gtm-theme");
         var theme = (s === "light" || s === "dark") ? s : "dark";
         document.documentElement.dataset.theme = theme;
         document.documentElement.classList.toggle("dark", theme === "dark");

@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-const API_KEY_STORAGE_KEY = "claude-enterprise-gtm-api-key";
+const API_KEY_STORAGE_KEY = "cursor-gtm-api-key";
 
 interface ApiKeyContextValue {
   apiKey: string;
